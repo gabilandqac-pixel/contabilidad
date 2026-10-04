@@ -567,7 +567,7 @@ function editarCompra(indice){
  });
 }
 
-function eliminarCompra(indice){
+async function eliminarCompra(indice){
 
  const c = compras[indice];
 
@@ -583,12 +583,16 @@ function eliminarCompra(indice){
    return;
  }
 if(c.idFirebase){
-  window.firestoreDeleteDoc(
-    window.firestoreDoc(window.db, "compras", c.idFirebase)
-  ).catch(error => {
+  try {
+    await window.firestoreDeleteDoc(
+      window.firestoreDoc(window.db, "compras", c.idFirebase)
+    );
+  } catch(error) {
     console.error("Error al eliminar en Firebase:", error);
-  });
-} 
+    alert("No se pudo eliminar la compra de Firebase.");
+    return;
+  }
+}
  compras.splice(indice,1);
 
  localStorage.setItem(

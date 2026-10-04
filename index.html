@@ -219,11 +219,9 @@ window.firestoreDoc = doc;
 <button class="boton verde" onclick="mostrar('listado')">
 📋 Compras cargadas
 </button>
-
-<button class="boton naranja" onclick="mostrar('cheques')">
+<button class="boton naranja" onclick="mostrar('cheques'); cargarCheques();">
 💰 Cheques
 </button>
-
 <button class="boton violeta"
 onclick="alert('Después agregaremos la exportación a Excel por fechas.')">
 📊 Exportar a Excel
@@ -420,6 +418,13 @@ Cancelar
 <button class="boton verde" onclick="guardarCheque()">
   Guardar cheque
 </button>  
+<hr>
+
+<h3>Cheques guardados</h3>
+
+<div id="listaCheques">
+  <p>No hay cheques cargados.</p>
+</div>  
  </section>
 </div>
 
@@ -618,6 +623,54 @@ function guardarCheque(){
   console.error("Error al guardar el cheque en Firebase:", error);
   alert("No se pudo guardar el cheque.");
 });
+
+} 
+async function cargarCheques(){
+
+  const lista = document.getElementById("listaCheques");
+
+  lista.innerHTML = "<p>Cargando cheques...</p>";
+
+  try {
+
+    const consulta = await window.firestoreGetDocs(
+      window.firestoreCollection(window.db, "cheques")
+    );
+
+    let html = "";
+
+    consulta.forEach((doc) => {
+
+      const cheque = doc.data();
+
+      html += `
+        <div class="tarjeta">
+          <strong>${cheque.banco || "Sin banco"}</strong><br>
+          Número: ${cheque.numero || "-"}<br>
+          Destinatario: ${cheque.destinatario || "-"}<br>
+          Importe: ${dinero(cheque.importe || 0)}<br>
+          Emisión: ${cheque.fechaEmision || "-"}<br>
+          Pago: ${cheque.fechaPago || "-"}<br>
+          Tipo: ${cheque.tipo || "-"}
+        </div>
+      `;
+
+    });
+
+    if(html === ""){
+      html = "<p>No hay cheques cargados.</p>";
+    }
+
+    lista.innerHTML = html;
+
+  } catch(error){
+
+    console.error("Error al cargar cheques:", error);
+
+    lista.innerHTML =
+      "<p>No se pudieron cargar los cheques.</p>";
+
+  }
 
 } 
 function editarCompra(indice){

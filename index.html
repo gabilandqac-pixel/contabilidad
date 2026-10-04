@@ -148,6 +148,25 @@ th{background:#eef4f9}
  }
 }
 </style>
+ <script type="module">
+  // Import the functions you need from the SDKs you need
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";  // TODO: Add SDKs for Firebase products that you want to use
+  // https://firebase.google.com/docs/web/setup#available-libraries
+
+  // Your web app's Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyCo8ZJ9cg52HeQG3bpqfyUx9pawiLJ7FdM",
+    authDomain: "contabilidad-ae483.firebaseapp.com",
+    projectId: "contabilidad-ae483",
+    storageBucket: "contabilidad-ae483.firebasestorage.app",
+    messagingSenderId: "550419095372",
+    appId: "1:550419095372:web:d5001429cef042008d79e9"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);</script>
 </head>
 
 <body>

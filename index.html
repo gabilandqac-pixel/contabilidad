@@ -640,38 +640,53 @@ document.getElementById("chequeTipo")?.value || ""
    return;
  }
 
- alert("indiceEdicion = " + indiceEdicion); if(indiceEdicion === null){
-
      window.firestoreAddDoc(
      window.firestoreCollection(window.db, "compras"),
      compra
    ).catch(error => {
      console.error("Error al guardar en Firebase:", error);
    });
-alert("indiceEdicion = " + indiceEdicion);
 
 if(indiceEdicion === null){
 
-  const cheque = {
-    banco: compra.chequeBanco,
-    numero: compra.chequeNumero,
-    destinatario: compra.chequeDestinatario,
-    importe: compra.chequeImporte,
-    fechaEmision: compra.chequeEmision,
-    fechaPago: compra.chequePago,
-    tipo: compra.chequeTipo,
-    razonSocial: compra.razon,
-    numeroFactura: compra.numero
-  };
+  const numeros = document.querySelectorAll(".compraChequeNumero");
+  const destinatarios = document.querySelectorAll(".compraChequeDestinatario");
+  const importes = document.querySelectorAll(".compraChequeImporte");
+  const emisiones = document.querySelectorAll(".compraChequeFechaEmision");
+  const pagos = document.querySelectorAll(".compraChequeFechaPago");
+  const tipos = document.querySelectorAll(".compraChequeTipo");
 
-  window.firestoreAddDoc(
-    window.firestoreCollection(window.db, "cheques"),
-    cheque
-  ).catch(error => {
-    console.error("Error al guardar cheque:", error);
+  numeros.forEach((campo, i) => {
+
+    const numeroCheque = campo.value.trim();
+
+    if(numeroCheque === "") return;
+
+    const cheque = {
+      banco: compra.pago === "Cheque Banco Provincia"
+        ? "Banco Provincia"
+        : "Banco Comafi",
+
+      numero: numeroCheque,
+      destinatario: destinatarios[i]?.value.trim() || "",
+      importe: Number(importes[i]?.value) || 0,
+      fechaEmision: emisiones[i]?.value || "",
+      fechaPago: pagos[i]?.value || "",
+      tipo: tipos[i]?.value || "",
+      razonSocial: compra.razon,
+      numeroFactura: compra.numero
+    };
+
+    window.firestoreAddDoc(
+      window.firestoreCollection(window.db, "cheques"),
+      cheque
+    ).catch(error => {
+      console.error("Error al guardar cheque:", error);
+    });
+
   });
 
-}  
+}
    compras.push(compra);
 
    alert("Compra guardada correctamente.");

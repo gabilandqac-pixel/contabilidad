@@ -13,32 +13,139 @@ header h1{margin:0;font-size:24px}
 header p{margin:5px 0 0;opacity:.85}
 .container{max-width:1200px;margin:auto;padding:25px}
 
-.resumen,.menu{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:25px}
-.card,.seccion{background:white;padding:20px;border-radius:14px;box-shadow:0 3px 12px #00000014}
+.resumen,.menu{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:15px;
+ margin-bottom:25px
+}
+
+.card,.seccion{
+ background:white;
+ padding:20px;
+ border-radius:14px;
+ box-shadow:0 3px 12px #00000014
+}
+
 .card h3{font-size:14px;margin:0 0 10px}
 .card strong{font-size:24px}
 
-.boton{border:0;border-radius:14px;padding:24px 12px;color:white;font-size:17px;font-weight:bold;cursor:pointer}
-.azul{background:#1976d2}.verde{background:#18a566}.naranja{background:#f7941d}.violeta{background:#7048d7}
+.boton{
+ border:0;
+ border-radius:14px;
+ padding:24px 12px;
+ color:white;
+ font-size:17px;
+ font-weight:bold;
+ cursor:pointer
+}
+
+.azul{background:#1976d2}
+.verde{background:#18a566}
+.naranja{background:#f7941d}
+.violeta{background:#7048d7}
 
 .seccion{margin-bottom:25px}
 .seccion h2{margin-top:0}
-.upload{border:2px dashed #9db5ca;border-radius:12px;padding:25px;text-align:center;margin-bottom:25px}
-.formulario{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.campo{display:flex;flex-direction:column}
-label{font-size:13px;font-weight:bold;margin-bottom:6px}
-input,select{padding:11px;border:1px solid #ccd6df;border-radius:7px;font-size:15px}
-.guardar{margin-top:20px;background:#1976d2;color:white;border:0;padding:14px 25px;border-radius:8px;font-size:16px;cursor:pointer}
 
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;font-size:13px}
+.upload{
+ border:2px dashed #9db5ca;
+ border-radius:12px;
+ padding:25px;
+ text-align:center;
+ margin-bottom:25px
+}
+
+.formulario{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:15px
+}
+
+.campo{
+ display:flex;
+ flex-direction:column
+}
+
+label{
+ font-size:13px;
+ font-weight:bold;
+ margin-bottom:6px
+}
+
+input,select{
+ padding:11px;
+ border:1px solid #ccd6df;
+ border-radius:7px;
+ font-size:15px
+}
+
+.guardar{
+ margin-top:20px;
+ background:#1976d2;
+ color:white;
+ border:0;
+ padding:14px 25px;
+ border-radius:8px;
+ font-size:16px;
+ cursor:pointer
+}
+
+.cancelar{
+ margin-top:20px;
+ margin-left:8px;
+ background:#6c757d;
+ color:white;
+ border:0;
+ padding:14px 25px;
+ border-radius:8px;
+ font-size:16px;
+ cursor:pointer
+}
+
+table{
+ width:100%;
+ border-collapse:collapse;
+ margin-top:15px
+}
+
+th,td{
+ padding:10px;
+ border-bottom:1px solid #ddd;
+ text-align:left;
+ font-size:13px
+}
+
 th{background:#eef4f9}
+
+.editar,.eliminar{
+ border:0;
+ border-radius:6px;
+ padding:7px 10px;
+ cursor:pointer;
+ margin:2px;
+ font-size:14px
+}
+
+.editar{
+ background:#ffc107;
+ color:#222
+}
+
+.eliminar{
+ background:#dc3545;
+ color:white
+}
 
 .oculto{display:none}
 
 @media(max-width:800px){
- .resumen,.menu,.formulario{grid-template-columns:1fr}
- .tabla{overflow-x:auto}
+ .resumen,.menu,.formulario{
+   grid-template-columns:1fr
+ }
+ .tabla{
+   overflow-x:auto
+ }
 }
 </style>
 </head>
@@ -53,26 +160,68 @@ th{background:#eef4f9}
 <div class="container">
 
 <div class="resumen">
-<div class="card"><h3>Total de compras</h3><strong id="rTotal">$ 0</strong></div>
-<div class="card"><h3>IVA 21%</h3><strong id="rIva21">$ 0</strong></div>
-<div class="card"><h3>IVA 10,5%</h3><strong id="rIva105">$ 0</strong></div>
-<div class="card"><h3>Impuestos internos</h3><strong id="rInternos">$ 0</strong></div>
+
+<div class="card">
+<h3>Total de compras</h3>
+<strong id="rTotal">$ 0</strong>
+</div>
+
+<div class="card">
+<h3>IVA 21%</h3>
+<strong id="rIva21">$ 0</strong>
+</div>
+
+<div class="card">
+<h3>IVA 10,5%</h3>
+<strong id="rIva105">$ 0</strong>
+</div>
+
+<div class="card">
+<h3>Impuestos internos</h3>
+<strong id="rInternos">$ 0</strong>
+</div>
+
 </div>
 
 <div class="menu">
-<button class="boton azul" onclick="mostrar('nueva')">📷 Nueva compra</button>
-<button class="boton verde" onclick="mostrar('listado')">📋 Compras cargadas</button>
-<button class="boton naranja" onclick="alert('En el próximo paso configuraremos los cheques.')">🏦 Cheques</button>
-<button class="boton violeta" onclick="alert('Después agregaremos la exportación a Excel por fechas.')">📊 Exportar a Excel</button>
+
+<button class="boton azul" onclick="nuevaCompra()">
+📷 Nueva compra
+</button>
+
+<button class="boton verde" onclick="mostrar('listado')">
+📋 Compras cargadas
+</button>
+
+<button class="boton naranja"
+onclick="alert('En el próximo paso configuraremos los cheques.')">
+🏦 Cheques
+</button>
+
+<button class="boton violeta"
+onclick="alert('Después agregaremos la exportación a Excel por fechas.')">
+📊 Exportar a Excel
+</button>
+
 </div>
 
 <section id="nueva" class="seccion">
-<h2>Nueva compra</h2>
+
+<h2 id="tituloFormulario">Nueva compra</h2>
 
 <div class="upload">
+
 <h3>📷 Sacá una foto de la factura</h3>
-<p>También podés elegir una imagen desde tu computadora o celular.</p>
-<input type="file" accept="image/*" capture="environment">
+
+<p>
+También podés elegir una imagen desde tu computadora o celular.
+</p>
+
+<input
+type="file"
+accept="image/*"
+capture="environment">
+
 </div>
 
 <div class="formulario">
@@ -132,28 +281,50 @@ th{background:#eef4f9}
 </div>
 
 <div class="campo">
+
 <label>Forma de pago</label>
+
 <select id="pago">
+
 <option>Efectivo caja chica</option>
 <option>Efectivo caja grande</option>
 <option>Transferencia Banco Provincia</option>
 <option>Transferencia Comafi</option>
 <option>Cheque Banco Provincia</option>
 <option>Cheque Comafi</option>
+
 </select>
-</div>
 
 </div>
 
-<button class="guardar" onclick="guardarCompra()">Guardar compra</button>
+</div>
+
+<button
+id="botonGuardar"
+class="guardar"
+onclick="guardarCompra()">
+Guardar compra
+</button>
+
+<button
+id="botonCancelar"
+class="cancelar oculto"
+onclick="cancelarEdicion()">
+Cancelar
+</button>
+
 </section>
 
 <section id="listado" class="seccion oculto">
+
 <h2>Compras cargadas</h2>
 
 <div class="tabla">
+
 <table>
+
 <thead>
+
 <tr>
 <th>Fecha</th>
 <th>Razón social</th>
@@ -166,18 +337,27 @@ th{background:#eef4f9}
 <th>Imp. internos</th>
 <th>Total</th>
 <th>Forma de pago</th>
+<th>Acciones</th>
 </tr>
+
 </thead>
+
 <tbody id="tablaCompras"></tbody>
+
 </table>
+
 </div>
+
 </section>
 
 </div>
 
 <script>
 
-let compras = JSON.parse(localStorage.getItem("compras")) || [];
+let compras =
+JSON.parse(localStorage.getItem("compras")) || [];
+
+let indiceEdicion = null;
 
 function numero(id){
  return Number(document.getElementById(id).value) || 0;
@@ -193,79 +373,295 @@ function dinero(valor){
 function guardarCompra(){
 
  const compra = {
-  fecha:document.getElementById("fecha").value,
-  razon:document.getElementById("razon").value.trim(),
-  cuit:document.getElementById("cuit").value.trim(),
-  tipo:document.getElementById("tipo").value,
-  numero:document.getElementById("numero").value.trim(),
+
+  fecha:
+  document.getElementById("fecha").value,
+
+  razon:
+  document.getElementById("razon").value.trim(),
+
+  cuit:
+  document.getElementById("cuit").value.trim(),
+
+  tipo:
+  document.getElementById("tipo").value,
+
+  numero:
+  document.getElementById("numero").value.trim(),
+
   neto:numero("neto"),
+
   iva21:numero("iva21"),
+
   iva105:numero("iva105"),
+
   internos:numero("internos"),
+
   total:numero("total"),
-  pago:document.getElementById("pago").value
+
+  pago:
+  document.getElementById("pago").value
+
  };
 
- if(!compra.fecha || !compra.razon || !compra.numero){
-   alert("Completá fecha, razón social y número de factura.");
+ if(
+   !compra.fecha ||
+   !compra.razon ||
+   !compra.numero
+ ){
+   alert(
+   "Completá fecha, razón social y número de factura."
+   );
    return;
  }
 
- compras.push(compra);
+ if(indiceEdicion === null){
 
- localStorage.setItem("compras",JSON.stringify(compras));
+   compras.push(compra);
+
+   alert("Compra guardada correctamente.");
+
+ }else{
+
+   compras[indiceEdicion] = compra;
+
+   alert("Compra actualizada correctamente.");
+
+ }
+
+ localStorage.setItem(
+   "compras",
+   JSON.stringify(compras)
+ );
+
+ limpiar();
 
  actualizar();
 
- alert("Compra guardada correctamente.");
+ mostrar("listado");
+}
+
+function editarCompra(indice){
+
+ const c = compras[indice];
+
+ indiceEdicion = indice;
+
+ document.getElementById("fecha").value = c.fecha;
+ document.getElementById("razon").value = c.razon;
+ document.getElementById("cuit").value = c.cuit;
+ document.getElementById("tipo").value = c.tipo;
+ document.getElementById("numero").value = c.numero;
+ document.getElementById("neto").value = c.neto;
+ document.getElementById("iva21").value = c.iva21;
+ document.getElementById("iva105").value = c.iva105;
+ document.getElementById("internos").value = c.internos;
+ document.getElementById("total").value = c.total;
+ document.getElementById("pago").value = c.pago;
+
+ document.getElementById(
+   "tituloFormulario"
+ ).textContent = "Editar compra";
+
+ document.getElementById(
+   "botonGuardar"
+ ).textContent = "Actualizar compra";
+
+ document.getElementById(
+   "botonCancelar"
+ ).classList.remove("oculto");
+
+ mostrar("nueva");
+
+ window.scrollTo({
+   top:0,
+   behavior:"smooth"
+ });
+}
+
+function eliminarCompra(indice){
+
+ const c = compras[indice];
+
+ const confirmar = confirm(
+   "¿Seguro que querés eliminar la factura " +
+   c.numero +
+   " de " +
+   c.razon +
+   "?"
+ );
+
+ if(!confirmar){
+   return;
+ }
+
+ compras.splice(indice,1);
+
+ localStorage.setItem(
+   "compras",
+   JSON.stringify(compras)
+ );
+
+ actualizar();
+}
+
+function cancelarEdicion(){
 
  limpiar();
+
+ mostrar("listado");
+}
+
+function nuevaCompra(){
+
+ limpiar();
+
+ mostrar("nueva");
 }
 
 function limpiar(){
- ["fecha","razon","cuit","numero","neto","iva21","iva105","internos","total"]
- .forEach(id=>document.getElementById(id).value="");
+
+ [
+ "fecha",
+ "razon",
+ "cuit",
+ "numero",
+ "neto",
+ "iva21",
+ "iva105",
+ "internos",
+ "total"
+ ]
+ .forEach(id=>{
+   document.getElementById(id).value="";
+ });
+
+ document.getElementById("tipo").value="A";
+
+ document.getElementById("pago").value=
+ "Efectivo caja chica";
+
+ indiceEdicion=null;
+
+ document.getElementById(
+   "tituloFormulario"
+ ).textContent="Nueva compra";
+
+ document.getElementById(
+   "botonGuardar"
+ ).textContent="Guardar compra";
+
+ document.getElementById(
+   "botonCancelar"
+ ).classList.add("oculto");
 }
 
 function mostrar(id){
- document.getElementById("nueva").classList.add("oculto");
- document.getElementById("listado").classList.add("oculto");
- document.getElementById(id).classList.remove("oculto");
+
+ document.getElementById(
+   "nueva"
+ ).classList.add("oculto");
+
+ document.getElementById(
+   "listado"
+ ).classList.add("oculto");
+
+ document.getElementById(
+   id
+ ).classList.remove("oculto");
 }
 
 function actualizar(){
 
- const tabla=document.getElementById("tablaCompras");
+ const tabla =
+ document.getElementById("tablaCompras");
+
  tabla.innerHTML="";
 
- compras.forEach(c=>{
-   tabla.innerHTML+=`
+ compras.forEach((c,indice)=>{
+
+   tabla.innerHTML += `
+
    <tr>
-    <td>${c.fecha}</td>
-    <td>${c.razon}</td>
-    <td>${c.cuit}</td>
-    <td>${c.tipo}</td>
-    <td>${c.numero}</td>
-    <td>${dinero(c.neto)}</td>
-    <td>${dinero(c.iva21)}</td>
-    <td>${dinero(c.iva105)}</td>
-    <td>${dinero(c.internos)}</td>
-    <td>${dinero(c.total)}</td>
-    <td>${c.pago}</td>
-   </tr>`;
+
+   <td>${c.fecha}</td>
+
+   <td>${c.razon}</td>
+
+   <td>${c.cuit}</td>
+
+   <td>${c.tipo}</td>
+
+   <td>${c.numero}</td>
+
+   <td>${dinero(c.neto)}</td>
+
+   <td>${dinero(c.iva21)}</td>
+
+   <td>${dinero(c.iva105)}</td>
+
+   <td>${dinero(c.internos)}</td>
+
+   <td>${dinero(c.total)}</td>
+
+   <td>${c.pago}</td>
+
+   <td>
+
+   <button
+   class="editar"
+   onclick="editarCompra(${indice})">
+   ✏️ Editar
+   </button>
+
+   <button
+   class="eliminar"
+   onclick="eliminarCompra(${indice})">
+   🗑️ Eliminar
+   </button>
+
+   </td>
+
+   </tr>
+
+   `;
  });
 
- document.getElementById("rTotal").textContent=
- dinero(compras.reduce((s,c)=>s+c.total,0));
+ document.getElementById(
+   "rTotal"
+ ).textContent =
+ dinero(
+   compras.reduce(
+     (s,c)=>s+c.total,0
+   )
+ );
 
- document.getElementById("rIva21").textContent=
- dinero(compras.reduce((s,c)=>s+c.iva21,0));
+ document.getElementById(
+   "rIva21"
+ ).textContent =
+ dinero(
+   compras.reduce(
+     (s,c)=>s+c.iva21,0
+   )
+ );
 
- document.getElementById("rIva105").textContent=
- dinero(compras.reduce((s,c)=>s+c.iva105,0));
+ document.getElementById(
+   "rIva105"
+ ).textContent =
+ dinero(
+   compras.reduce(
+     (s,c)=>s+c.iva105,0
+   )
+ );
 
- document.getElementById("rInternos").textContent=
- dinero(compras.reduce((s,c)=>s+c.internos,0));
+ document.getElementById(
+   "rInternos"
+ ).textContent =
+ dinero(
+   compras.reduce(
+     (s,c)=>s+c.internos,0
+   )
+ );
 }
 
 actualizar();

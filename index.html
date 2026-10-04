@@ -403,7 +403,25 @@ function guardarCompra(){
   document.getElementById("pago").value
 
  };
+  const sumaCalculada =
+   compra.neto +
+   compra.iva21 +
+   compra.iva105 +
+   compra.internos;
 
+ const diferencia = Math.abs(sumaCalculada - compra.total);
+
+ if(diferencia > 1){
+   alert(
+     "⚠️ Atención: los importes no coinciden.\n\n" +
+     "Neto + IVA + Impuestos internos = " +
+     dinero(sumaCalculada) +
+     "\n\nTotal de la factura = " +
+     dinero(compra.total) +
+     "\n\nRevisá los importes antes de guardar."
+   );
+   return;
+ }
  if(
    !compra.fecha ||
    !compra.razon ||

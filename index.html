@@ -394,6 +394,10 @@ Cancelar
   <input type="text" id="chequeNumero">
 </div>  
 <div class="campo">
+  <label>Destinatario / Beneficiario</label>
+  <input type="text" id="chequeDestinatario">
+</div>  
+<div class="campo">
   <label>Importe</label>
   <input type="number" id="chequeImporte" step="0.01">
 </div>
@@ -573,7 +577,8 @@ function guardarCheque(){
   const cheque = {
     banco: document.getElementById("chequeBanco").value,
     numero: document.getElementById("chequeNumero").value.trim(),
-    importe: Number(document.getElementById("chequeImporte").value) || 0,
+   destinatario: document.getElementById("chequeDestinatario").value.trim(),
+   importe: Number(document.getElementById("chequeImporte").value) || 0,
     fechaEmision: document.getElementById("chequeFechaEmision").value,
     fechaPago: document.getElementById("chequeFechaPago").value,
     tipo: document.getElementById("chequeTipo").value

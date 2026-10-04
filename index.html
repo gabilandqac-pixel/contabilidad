@@ -220,9 +220,8 @@ window.firestoreDoc = doc;
 📋 Compras cargadas
 </button>
 
-<button class="boton naranja"
-onclick="alert('En el próximo paso configuraremos los cheques.')">
-🏦 Cheques
+<button class="boton naranja" onclick="mostrar('cheques')">
+💰 Cheques
 </button>
 
 <button class="boton violeta"
@@ -376,7 +375,13 @@ Cancelar
 </div>
 
 </section>
+ <section id="cheques" class="seccion oculto">
 
+  <h2>💰 Cheques</h2>
+
+  <p>Control de cheques emitidos y fechas de pago.</p>
+
+</section>
 </div>
 
 <script>
@@ -664,6 +669,9 @@ function mostrar(id){
    "listado"
  ).classList.add("oculto");
 
+ document.getElementById(
+   "cheques"
+ ).classList.add("oculto");
  document.getElementById(
    id
  ).classList.remove("oculto");

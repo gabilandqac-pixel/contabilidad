@@ -381,7 +381,42 @@ Cancelar
 
   <p>Control de cheques emitidos y fechas de pago.</p>
 
-</section>
+  <div class="campo">
+  <label>Banco</label>
+  <select id="chequeBanco">
+    <option value="">Seleccionar banco</option>
+    <option>Banco Provincia</option>
+    <option>Banco Comafi</option>
+  </select>
+</div>
+<div class="campo">
+  <label>Número de cheque</label>
+  <input type="text" id="chequeNumero">
+</div>  
+<div class="campo">
+  <label>Importe</label>
+  <input type="number" id="chequeImporte" step="0.01">
+</div>
+<div class="campo">
+  <label>Fecha de emisión</label>
+  <input type="date" id="chequeFechaEmision">
+</div>  
+  <div class="campo">
+  <label>Fecha de pago</label>
+  <input type="date" id="chequeFechaPago">
+</div>
+ <div class="campo">
+  <label>Tipo de cheque</label>
+  <select id="chequeTipo">
+    <option value="">Seleccionar tipo</option>
+    <option>Cheque físico</option>
+    <option>eCheq</option>
+  </select>
+</div>
+<button class="boton verde" onclick="guardarCheque()">
+  Guardar cheque
+</button>  
+ </section>
 </div>
 
 <script>
@@ -533,7 +568,20 @@ window.firestoreUpdateDoc(
 
  mostrar("listado");
 }
+function guardarCheque(){
 
+  const cheque = {
+    banco: document.getElementById("chequeBanco").value,
+    numero: document.getElementById("chequeNumero").value.trim(),
+    importe: Number(document.getElementById("chequeImporte").value) || 0,
+    fechaEmision: document.getElementById("chequeFechaEmision").value,
+    fechaPago: document.getElementById("chequeFechaPago").value,
+    tipo: document.getElementById("chequeTipo").value
+  };
+
+  console.log("Cheque:", cheque);
+
+} 
 function editarCompra(indice){
 
  const c = compras[indice];

@@ -381,9 +381,27 @@ Cancelar
 
 <script>
 
-let compras =
-JSON.parse(localStorage.getItem("compras")) || [];
+let compras = [];
+ async function cargarComprasDesdeFirebase(){
+  try {
+    const consulta = await window.firestoreGetDocs(
+      window.firestoreCollection(window.db, "compras")
+    );
 
+    compras = [];
+
+    consulta.forEach((documento) => {
+      compras.push({
+        idFirebase: documento.id,
+        ...documento.data()
+      });
+    });
+
+    actualizar();
+  } catch (error) {
+    console.error("Error al cargar compras desde Firebase:", error);
+  }
+}
 let indiceEdicion = null;
 
 function numero(id){
@@ -715,7 +733,7 @@ function actualizar(){
  );
 }
 
-actualizar();
+cargarComprasDesdeFirebase();
 
 </script>
 

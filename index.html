@@ -506,14 +506,16 @@ chequeImporte:
 numero("chequeImporte"),
 
 chequeEmision:
-document.getElementById("chequeEmision")?.value || "",
+document.getElementById("chequeFechaEmision")?.value || "",
 
 chequePago:
-document.getElementById("chequePago")?.value || "",
+document.getElementById("chequeFechaPago")?.value || "",
 
 chequeDestinatario:
-document.getElementById("chequeDestinatario")?.value.trim() || ""
+document.getElementById("chequeDestinatario")?.value.trim() || "",
 
+chequeTipo:
+document.getElementById("chequeTipo")?.value || ""
 };
   const sumaCalculada =
    compra.neto +
@@ -562,7 +564,7 @@ if(compra.chequeNumero){
     importe: compra.chequeImporte,
     fechaEmision: compra.chequeEmision,
     fechaPago: compra.chequePago,
-    tipo: compra.pago,
+    tipo: compra.chequeTipo,
     razonSocial: compra.razon,
     numeroFactura: compra.numero
   };

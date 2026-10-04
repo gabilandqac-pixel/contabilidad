@@ -242,9 +242,10 @@ También podés elegir una imagen desde tu computadora o celular.
 </p>
 
 <input
-type="file"
-accept="image/*"
-capture="environment">
+  id="fotoFactura"
+  type="file"
+  accept="image/*,.pdf"
+  onchange="procesarFactura(this.files[0])">
 
 </div>
 

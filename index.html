@@ -166,7 +166,15 @@ th{background:#eef4f9}
 
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);</script>
+  const db = getFirestore(app);
+window.db = db;
+window.firestoreCollection = collection;
+window.firestoreAddDoc = addDoc;
+window.firestoreGetDocs = getDocs;
+window.firestoreUpdateDoc = updateDoc;
+window.firestoreDeleteDoc = deleteDoc;
+window.firestoreDoc = doc;  
+ </script>
 </head>
 
 <body>
@@ -454,6 +462,12 @@ function guardarCompra(){
 
  if(indiceEdicion === null){
 
+     window.firestoreAddDoc(
+     window.firestoreCollection(window.db, "compras"),
+     compra
+   ).catch(error => {
+     console.error("Error al guardar en Firebase:", error);
+   });
    compras.push(compra);
 
    alert("Compra guardada correctamente.");

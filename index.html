@@ -547,7 +547,7 @@ document.getElementById("chequeTipo")?.value || ""
    return;
  }
 
- if(indiceEdicion === null){
+ alert("indiceEdicion = " + indiceEdicion); if(indiceEdicion === null){
 
      window.firestoreAddDoc(
      window.firestoreCollection(window.db, "compras"),
@@ -555,8 +555,11 @@ document.getElementById("chequeTipo")?.value || ""
    ).catch(error => {
      console.error("Error al guardar en Firebase:", error);
    });
-alert("Número de cheque detectado: " + compra.chequeNumero);  
-if(compra.chequeNumero){
+alert("indiceEdicion = " + indiceEdicion);
+
+if(indiceEdicion === null){
+
+    window.firestoreAddDoc(
 
   const cheque = {
     banco: compra.chequeBanco,

@@ -308,7 +308,7 @@ capture="environment">
 
 <label>Forma de pago</label>
 
-<select id="pago">
+<select id="pago" onchange="mostrarDatosChequeCompra()">
 
 <option>Efectivo caja chica</option>
 <option>Efectivo caja grande</option>
@@ -320,7 +320,43 @@ capture="environment">
 </select>
 
 </div>
+ <div id="datosChequeCompra" style="display:none;">
 
+  <div class="campo">
+    <label>Número de cheque</label>
+    <input type="text" id="compraChequeNumero">
+  </div>
+
+  <div class="campo">
+    <label>Destinatario / Beneficiario</label>
+    <input type="text" id="compraChequeDestinatario">
+  </div>
+
+  <div class="campo">
+    <label>Importe del cheque</label>
+    <input type="number" id="compraChequeImporte" step="0.01">
+  </div>
+
+  <div class="campo">
+    <label>Fecha de emisión</label>
+    <input type="date" id="compraChequeFechaEmision">
+  </div>
+
+  <div class="campo">
+    <label>Fecha de pago</label>
+    <input type="date" id="compraChequeFechaPago">
+  </div>
+
+  <div class="campo">
+    <label>Tipo de cheque</label>
+    <select id="compraChequeTipo">
+      <option value="">Seleccionar tipo</option>
+      <option>Cheque físico</option>
+      <option>eCheq</option>
+    </select>
+  </div>
+
+</div>
 </div>
 
 <button
@@ -464,6 +500,21 @@ function dinero(valor){
  }).format(valor);
 }
 
+function mostrarDatosChequeCompra(){
+
+  const pago = document.getElementById("pago").value;
+  const datosCheque = document.getElementById("datosChequeCompra");
+
+  if(
+    pago === "Cheque Banco Provincia" ||
+    pago === "Cheque Comafi"
+  ){
+    datosCheque.style.display = "block";
+  }else{
+    datosCheque.style.display = "none";
+  }
+
+} 
 function guardarCompra(){
 
  const compra = {

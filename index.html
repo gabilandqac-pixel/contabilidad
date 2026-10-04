@@ -553,6 +553,28 @@ document.getElementById("chequeDestinatario")?.value.trim() || ""
    ).catch(error => {
      console.error("Error al guardar en Firebase:", error);
    });
+if(compra.chequeNumero){
+
+  const cheque = {
+    banco: compra.chequeBanco,
+    numero: compra.chequeNumero,
+    destinatario: compra.chequeDestinatario,
+    importe: compra.chequeImporte,
+    fechaEmision: compra.chequeEmision,
+    fechaPago: compra.chequePago,
+    tipo: compra.pago,
+    razonSocial: compra.razon,
+    numeroFactura: compra.numero
+  };
+
+  window.firestoreAddDoc(
+    window.firestoreCollection(window.db, "cheques"),
+    cheque
+  ).catch(error => {
+    console.error("Error al guardar cheque:", error);
+  });
+
+}  
    compras.push(compra);
 
    alert("Compra guardada correctamente.");

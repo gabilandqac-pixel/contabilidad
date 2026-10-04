@@ -555,6 +555,7 @@ document.getElementById("chequeTipo")?.value || ""
    ).catch(error => {
      console.error("Error al guardar en Firebase:", error);
    });
+alert("Número de cheque detectado: " + compra.chequeNumero);  
 if(compra.chequeNumero){
 
   const cheque = {

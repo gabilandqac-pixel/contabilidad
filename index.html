@@ -488,10 +488,28 @@ function guardarCompra(){
 
   total:numero("total"),
 
-  pago:
-  document.getElementById("pago").value
+ pago:
+document.getElementById("pago").value,
 
- };
+chequeBanco:
+document.getElementById("chequeBanco")?.value || "",
+
+chequeNumero:
+document.getElementById("chequeNumero")?.value.trim() || "",
+
+chequeImporte:
+numero("chequeImporte"),
+
+chequeEmision:
+document.getElementById("chequeEmision")?.value || "",
+
+chequePago:
+document.getElementById("chequePago")?.value || "",
+
+chequeDestinatario:
+document.getElementById("chequeDestinatario")?.value.trim() || ""
+
+};
   const sumaCalculada =
    compra.neto +
    compra.iva21 +
@@ -550,7 +568,14 @@ window.firestoreUpdateDoc(
     iva105: compra.iva105,
     internos: compra.internos,
     total: compra.total,
-    pago: compra.pago
+pago: compra.pago,
+
+chequeBanco: compra.chequeBanco,
+chequeNumero: compra.chequeNumero,
+chequeImporte: compra.chequeImporte,
+chequeEmision: compra.chequeEmision,
+chequePago: compra.chequePago,
+chequeDestinatario: compra.chequeDestinatario
   }
 ).catch(error => {
   console.error("Error al actualizar en Firebase:", error);

@@ -491,7 +491,26 @@ function guardarCompra(){
    alert("Compra guardada correctamente.");
 
  }else{
+compra.idFirebase = compras[indiceEdicion].idFirebase;
 
+window.firestoreUpdateDoc(
+  window.firestoreDoc(window.db, "compras", compra.idFirebase),
+  {
+    fecha: compra.fecha,
+    razon: compra.razon,
+    cuit: compra.cuit,
+    tipo: compra.tipo,
+    numero: compra.numero,
+    neto: compra.neto,
+    iva21: compra.iva21,
+    iva105: compra.iva105,
+    internos: compra.internos,
+    total: compra.total,
+    pago: compra.pago
+  }
+).catch(error => {
+  console.error("Error al actualizar en Firebase:", error);
+});  
    compras[indiceEdicion] = compra;
 
    alert("Compra actualizada correctamente.");

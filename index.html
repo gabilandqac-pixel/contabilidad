@@ -5,151 +5,40 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Contabilidad - Compras</title>
 
-  
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-  font-family:Arial, sans-serif;
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#17324d}
+header{background:#0b3d66;color:white;padding:20px 30px}
+header h1{margin:0;font-size:24px}
+header p{margin:5px 0 0;opacity:.85}
+.container{max-width:1200px;margin:auto;padding:25px}
 
-body{
-  background:#f4f7fb;
-  color:#17324d;
-}
+.resumen,.menu{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:25px}
+.card,.seccion{background:white;padding:20px;border-radius:14px;box-shadow:0 3px 12px #00000014}
+.card h3{font-size:14px;margin:0 0 10px}
+.card strong{font-size:24px}
 
-header{
-  background:#0b3d66;
-  color:white;
-  padding:20px 30px;
-}
+.boton{border:0;border-radius:14px;padding:24px 12px;color:white;font-size:17px;font-weight:bold;cursor:pointer}
+.azul{background:#1976d2}.verde{background:#18a566}.naranja{background:#f7941d}.violeta{background:#7048d7}
 
-header h1{
-  font-size:24px;
-}
+.seccion{margin-bottom:25px}
+.seccion h2{margin-top:0}
+.upload{border:2px dashed #9db5ca;border-radius:12px;padding:25px;text-align:center;margin-bottom:25px}
+.formulario{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.campo{display:flex;flex-direction:column}
+label{font-size:13px;font-weight:bold;margin-bottom:6px}
+input,select{padding:11px;border:1px solid #ccd6df;border-radius:7px;font-size:15px}
+.guardar{margin-top:20px;background:#1976d2;color:white;border:0;padding:14px 25px;border-radius:8px;font-size:16px;cursor:pointer}
 
-header p{
-  margin-top:5px;
-  opacity:.85;
-}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:10px;border-bottom:1px solid #ddd;text-align:left;font-size:13px}
+th{background:#eef4f9}
 
-.container{
-  max-width:1200px;
-  margin:auto;
-  padding:25px;
-}
-
-.resumen{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:25px;
-}
-
-.card{
-  background:white;
-  padding:20px;
-  border-radius:14px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-
-.card h3{
-  font-size:15px;
-  margin-bottom:10px;
-}
-
-.card strong{
-  font-size:24px;
-}
-
-.menu{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
-  margin-bottom:30px;
-}
-
-.boton{
-  border:none;
-  border-radius:14px;
-  padding:25px 15px;
-  color:white;
-  font-size:18px;
-  font-weight:bold;
-  cursor:pointer;
-  min-height:120px;
-}
-
-.azul{background:#1976d2;}
-.verde{background:#18a566;}
-.naranja{background:#f7941d;}
-.violeta{background:#7048d7;}
-
-.seccion{
-  background:white;
-  padding:25px;
-  border-radius:14px;
-  box-shadow:0 3px 12px rgba(0,0,0,.08);
-}
-
-.seccion h2{
-  margin-bottom:20px;
-}
-
-.upload{
-  border:2px dashed #9db5ca;
-  border-radius:12px;
-  padding:35px;
-  text-align:center;
-  margin-bottom:25px;
-}
-
-.upload input{
-  margin-top:15px;
-}
-
-.formulario{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-}
-
-.campo{
-  display:flex;
-  flex-direction:column;
-}
-
-label{
-  font-size:13px;
-  font-weight:bold;
-  margin-bottom:6px;
-}
-
-input, select{
-  padding:11px;
-  border:1px solid #ccd6df;
-  border-radius:7px;
-  font-size:15px;
-}
-
-.guardar{
-  margin-top:20px;
-  background:#1976d2;
-  color:white;
-  border:none;
-  padding:14px 25px;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer;
-}
+.oculto{display:none}
 
 @media(max-width:800px){
-  .resumen,
-  .menu,
-  .formulario{
-    grid-template-columns:1fr;
-  }
+ .resumen,.menu,.formulario{grid-template-columns:1fr}
+ .tabla{overflow-x:auto}
 }
 </style>
 </head>
@@ -157,163 +46,231 @@ input, select{
 <body>
 
 <header>
-  <h1>📄 Contabilidad - Compras</h1>
-  <p>Control de facturas, impuestos, pagos y cheques</p>
+<h1>📄 Contabilidad - Compras</h1>
+<p>Control de facturas, impuestos, pagos y cheques</p>
 </header>
 
 <div class="container">
 
-  <div class="resumen">
+<div class="resumen">
+<div class="card"><h3>Total de compras</h3><strong id="rTotal">$ 0</strong></div>
+<div class="card"><h3>IVA 21%</h3><strong id="rIva21">$ 0</strong></div>
+<div class="card"><h3>IVA 10,5%</h3><strong id="rIva105">$ 0</strong></div>
+<div class="card"><h3>Impuestos internos</h3><strong id="rInternos">$ 0</strong></div>
+</div>
 
-    <div class="card">
-      <h3>Total de compras</h3>
-      <strong>$ 0</strong>
-    </div>
+<div class="menu">
+<button class="boton azul" onclick="mostrar('nueva')">📷 Nueva compra</button>
+<button class="boton verde" onclick="mostrar('listado')">📋 Compras cargadas</button>
+<button class="boton naranja" onclick="alert('En el próximo paso configuraremos los cheques.')">🏦 Cheques</button>
+<button class="boton violeta" onclick="alert('Después agregaremos la exportación a Excel por fechas.')">📊 Exportar a Excel</button>
+</div>
 
-    <div class="card">
-      <h3>IVA 21%</h3>
-      <strong>$ 0</strong>
-    </div>
+<section id="nueva" class="seccion">
+<h2>Nueva compra</h2>
 
-    <div class="card">
-      <h3>IVA 10,5%</h3>
-      <strong>$ 0</strong>
-    </div>
+<div class="upload">
+<h3>📷 Sacá una foto de la factura</h3>
+<p>También podés elegir una imagen desde tu computadora o celular.</p>
+<input type="file" accept="image/*" capture="environment">
+</div>
 
-    <div class="card">
-      <h3>Impuestos internos</h3>
-      <strong>$ 0</strong>
-    </div>
+<div class="formulario">
 
-  </div>
+<div class="campo">
+<label>Fecha</label>
+<input id="fecha" type="date">
+</div>
 
-  <div class="menu">
+<div class="campo">
+<label>Razón social</label>
+<input id="razon" type="text">
+</div>
 
-    <button class="boton azul">
-      📷 Nueva compra
-    </button>
+<div class="campo">
+<label>CUIT</label>
+<input id="cuit" type="text">
+</div>
 
-    <button class="boton verde">
-      📋 Compras cargadas
-    </button>
+<div class="campo">
+<label>Tipo de factura</label>
+<select id="tipo">
+<option>A</option>
+<option>B</option>
+<option>C</option>
+</select>
+</div>
 
-    <button class="boton naranja">
-      🏦 Cheques
-    </button>
+<div class="campo">
+<label>Número de factura</label>
+<input id="numero" type="text">
+</div>
 
-    <button class="boton violeta">
-      📊 Exportar a Excel
-    </button>
+<div class="campo">
+<label>Importe neto</label>
+<input id="neto" type="number" step="0.01">
+</div>
 
-  </div>
+<div class="campo">
+<label>IVA 21%</label>
+<input id="iva21" type="number" step="0.01">
+</div>
 
-  <div class="seccion">
+<div class="campo">
+<label>IVA 10,5%</label>
+<input id="iva105" type="number" step="0.01">
+</div>
 
-    <h2>Nueva compra</h2>
+<div class="campo">
+<label>Impuestos internos</label>
+<input id="internos" type="number" step="0.01">
+</div>
 
-    <div class="upload">
+<div class="campo">
+<label>Total</label>
+<input id="total" type="number" step="0.01">
+</div>
 
-      <h3>📷 Sacá una foto de la factura</h3>
-
-      <p>
-        También podés seleccionar una imagen desde tu computadora o celular.
-      </p>
-
-      <input
-        type="file"
-        accept="image/*"
-        capture="environment"
-      >
-
-    </div>
-
-    <div class="formulario">
-
-      <div class="campo">
-        <label>Fecha</label>
-        <input type="date">
-      </div>
-
-      <div class="campo">
-        <label>Razón social</label>
-        <input type="text">
-      </div>
-
-      <div class="campo">
-        <label>CUIT</label>
-        <input type="text">
-      </div>
-
-      <div class="campo">
-        <label>Tipo de factura</label>
-        <select>
-          <option>A</option>
-          <option>B</option>
-          <option>C</option>
-        </select>
-      </div>
-
-      <div class="campo">
-        <label>Número de factura</label>
-        <input type="text">
-      </div>
-
-      <div class="campo">
-        <label>Importe neto</label>
-        <input type="number">
-      </div>
-
-      <div class="campo">
-        <label>IVA 21%</label>
-        <input type="number">
-      </div>
-
-      <div class="campo">
-        <label>IVA 10,5%</label>
-        <input type="number">
-      </div>
-
-      <div class="campo">
-        <label>Impuestos internos</label>
-        <input type="number">
-      </div>
-
-      <div class="campo">
-        <label>Total</label>
-        <input type="number">
-      </div>
-
-      <div class="campo">
-
-        <label>Forma de pago</label>
-
-        <select>
-
-          <option>Efectivo caja chica</option>
-
-          <option>Efectivo caja grande</option>
-
-          <option>Transferencia Banco Provincia</option>
-
-          <option>Transferencia Comafi</option>
-
-          <option>Cheque Banco Provincia</option>
-
-          <option>Cheque Comafi</option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-    <button class="guardar">
-      Guardar compra
-    </button>
-
-  </div>
+<div class="campo">
+<label>Forma de pago</label>
+<select id="pago">
+<option>Efectivo caja chica</option>
+<option>Efectivo caja grande</option>
+<option>Transferencia Banco Provincia</option>
+<option>Transferencia Comafi</option>
+<option>Cheque Banco Provincia</option>
+<option>Cheque Comafi</option>
+</select>
+</div>
 
 </div>
+
+<button class="guardar" onclick="guardarCompra()">Guardar compra</button>
+</section>
+
+<section id="listado" class="seccion oculto">
+<h2>Compras cargadas</h2>
+
+<div class="tabla">
+<table>
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Razón social</th>
+<th>CUIT</th>
+<th>Tipo</th>
+<th>Número</th>
+<th>Neto</th>
+<th>IVA 21%</th>
+<th>IVA 10,5%</th>
+<th>Imp. internos</th>
+<th>Total</th>
+<th>Forma de pago</th>
+</tr>
+</thead>
+<tbody id="tablaCompras"></tbody>
+</table>
+</div>
+</section>
+
+</div>
+
+<script>
+
+let compras = JSON.parse(localStorage.getItem("compras")) || [];
+
+function numero(id){
+ return Number(document.getElementById(id).value) || 0;
+}
+
+function dinero(valor){
+ return new Intl.NumberFormat("es-AR",{
+   style:"currency",
+   currency:"ARS"
+ }).format(valor);
+}
+
+function guardarCompra(){
+
+ const compra = {
+  fecha:document.getElementById("fecha").value,
+  razon:document.getElementById("razon").value.trim(),
+  cuit:document.getElementById("cuit").value.trim(),
+  tipo:document.getElementById("tipo").value,
+  numero:document.getElementById("numero").value.trim(),
+  neto:numero("neto"),
+  iva21:numero("iva21"),
+  iva105:numero("iva105"),
+  internos:numero("internos"),
+  total:numero("total"),
+  pago:document.getElementById("pago").value
+ };
+
+ if(!compra.fecha || !compra.razon || !compra.numero){
+   alert("Completá fecha, razón social y número de factura.");
+   return;
+ }
+
+ compras.push(compra);
+
+ localStorage.setItem("compras",JSON.stringify(compras));
+
+ actualizar();
+
+ alert("Compra guardada correctamente.");
+
+ limpiar();
+}
+
+function limpiar(){
+ ["fecha","razon","cuit","numero","neto","iva21","iva105","internos","total"]
+ .forEach(id=>document.getElementById(id).value="");
+}
+
+function mostrar(id){
+ document.getElementById("nueva").classList.add("oculto");
+ document.getElementById("listado").classList.add("oculto");
+ document.getElementById(id).classList.remove("oculto");
+}
+
+function actualizar(){
+
+ const tabla=document.getElementById("tablaCompras");
+ tabla.innerHTML="";
+
+ compras.forEach(c=>{
+   tabla.innerHTML+=`
+   <tr>
+    <td>${c.fecha}</td>
+    <td>${c.razon}</td>
+    <td>${c.cuit}</td>
+    <td>${c.tipo}</td>
+    <td>${c.numero}</td>
+    <td>${dinero(c.neto)}</td>
+    <td>${dinero(c.iva21)}</td>
+    <td>${dinero(c.iva105)}</td>
+    <td>${dinero(c.internos)}</td>
+    <td>${dinero(c.total)}</td>
+    <td>${c.pago}</td>
+   </tr>`;
+ });
+
+ document.getElementById("rTotal").textContent=
+ dinero(compras.reduce((s,c)=>s+c.total,0));
+
+ document.getElementById("rIva21").textContent=
+ dinero(compras.reduce((s,c)=>s+c.iva21,0));
+
+ document.getElementById("rIva105").textContent=
+ dinero(compras.reduce((s,c)=>s+c.iva105,0));
+
+ document.getElementById("rInternos").textContent=
+ dinero(compras.reduce((s,c)=>s+c.internos,0));
+}
+
+actualizar();
+
+</script>
 
 </body>
 </html>

@@ -582,7 +582,13 @@ function eliminarCompra(indice){
  if(!confirmar){
    return;
  }
-
+if(c.idFirebase){
+  window.firestoreDeleteDoc(
+    window.firestoreDoc(window.db, "compras", c.idFirebase)
+  ).catch(error => {
+    console.error("Error al eliminar en Firebase:", error);
+  });
+} 
  compras.splice(indice,1);
 
  localStorage.setItem(

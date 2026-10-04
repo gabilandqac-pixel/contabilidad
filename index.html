@@ -584,7 +584,15 @@ function guardarCheque(){
     tipo: document.getElementById("chequeTipo").value
   };
 
-  console.log("Cheque:", cheque);
+  window.firestoreAddDoc(
+  window.firestoreCollection(window.db, "cheques"),
+  cheque
+).then(() => {
+  alert("Cheque guardado correctamente.");
+}).catch(error => {
+  console.error("Error al guardar el cheque en Firebase:", error);
+  alert("No se pudo guardar el cheque.");
+});
 
 } 
 function editarCompra(indice){

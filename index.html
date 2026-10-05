@@ -242,10 +242,9 @@ También podés elegir una imagen desde tu computadora o celular.
 </p>
 
 <input
-  id="fotoFactura"
-  type="file"
-  accept="image/*,.pdf"
-  onchange="procesarFactura(this.files[0])">
+type="file"
+accept="image/*"
+capture="environment">
 
 </div>
 
@@ -557,18 +556,8 @@ function mostrarDatosChequeCompra(){
     `;
 
   }
-}
-  async function procesarFactura(archivo){
 
-  if(!archivo){
-    return;
-  }
-
-  alert("Factura seleccionada correctamente. En el próximo paso la conectamos con la lectura automática.");
-
-}
-  
-function guardarCompra(){
+}function guardarCompra(){
 
  const compra = {
 

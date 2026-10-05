@@ -565,13 +565,89 @@ function mostrarDatosChequeCompra(){
 
   
  }
- async function procesarFactura(archivo){
+async function procesarFactura(archivo){
 
   if(!archivo){
     return;
   }
 
-  alert("Factura seleccionada correctamente.");
+  try {
+
+    alert("Leyendo factura con inteligencia artificial...");
+
+    const base64 = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        resolve(reader.result.split(",")[1]);
+      };
+
+      reader.onerror = reject;
+      reader.readAsDataURL(archivo);
+    });
+
+    const archivoParte = {
+      inlineData: {
+        data: base64,
+        mimeType: archivo.type
+      }
+    };
+
+    const prompt = `
+Analizá esta factura de compra argentina.
+
+Extraé estos datos:
+- fecha
+- razonSocial
+- cuit
+- tipoFactura
+- numeroFactura
+- neto
+- iva21
+- iva105
+- impuestosInternos
+- total
+
+Respondé SOLAMENTE con JSON válido, sin explicaciones y sin bloques de código.
+
+Formato exacto:
+{
+  "fecha": "AAAA-MM-DD",
+  "razonSocial": "",
+  "cuit": "",
+  "tipoFactura": "A",
+  "numeroFactura": "",
+  "neto": 0,
+  "iva21": 0,
+  "iva105": 0,
+  "impuestosInternos": 0,
+  "total": 0
+}
+
+Si algún dato no aparece, usá una cadena vacía o 0.
+`;
+
+    const resultado =
+      await window.geminiModel.generateContent([
+        prompt,
+        archivoParte
+      ]);
+
+    const texto = resultado.response.text();
+
+    console.log("Respuesta Gemini:", texto);
+
+    alert("Gemini leyó la factura correctamente.");
+
+  } catch(error) {
+
+    console.error("Error leyendo factura:", error);
+
+    alert(
+      "No se pudo leer la factura. Revisaremos el error en la consola."
+    );
+
+  }
 
 }
  function guardarCompra(){

@@ -299,14 +299,29 @@ onchange="procesarFactura(this.files[0])">
 <input id="iva105" type="number" step="0.01">
 </div>
 
-<div class="campo">
-<label>Impuestos internos</label>
-<input id="internos" type="number" step="0.01">
+ <div class="campo">
+<label>IVA 27%</label>
+<input id="iva27" type="number" step="0.01">
 </div>
 
  <div class="campo">
-<label>IIBB</label>
-<input id="iibb" type="number" step="0.01">
+<label>Percepción IVA</label>
+<input id="percepcionIva" type="number" step="0.01">
+</div>
+
+<div class="campo">
+<label>Percepción IIBB Bs. As.</label>
+<input id="percepcionIibbBsAs" type="number" step="0.01">
+</div>
+
+<div class="campo">
+<label>Percepción IIBB CABA</label>
+<input id="percepcionIibbCaba" type="number" step="0.01">
+</div>
+
+<div class="campo">
+<label>Impuestos internos</label>
+<input id="internos" type="number" step="0.01">
 </div>
 
 <div class="campo">
@@ -387,6 +402,10 @@ Cancelar
 <th>Neto</th>
 <th>IVA 21%</th>
 <th>IVA 10,5%</th>
+ <th>IVA 27%</th>
+<th>Percepción IVA</th>
+<th>Percepción IIBB Bs. As.</th>
+<th>Percepción IIBB CABA</th>
 <th>Imp. internos</th>
 <th>Total</th>
 <th>Forma de pago</th>
@@ -613,8 +632,11 @@ Extraé estos datos:
 - neto
 - iva21
 - iva105
+- iva27
+- percepcionIva
+- percepcionIibbBsAs
+- percepcionIibbCaba
 - impuestosInternos
-- iibb
 - total
 
 Respondé SOLAMENTE con JSON válido, sin explicaciones y sin bloques de código.
@@ -629,8 +651,11 @@ Formato exacto:
   "neto": 0,
   "iva21": 0,
   "iva105": 0,
+  "iva27": 0,
+"percepcionIva": 0,
+"percepcionIibbBsAs": 0,
+"percepcionIibbCaba": 0,
   "impuestosInternos": 0,
-  "iibb": 0,
   "total": 0
 }
 
@@ -657,8 +682,11 @@ document.getElementById("numero").value = datos.numeroFactura || "";
 document.getElementById("neto").value = datos.neto || 0;
 document.getElementById("iva21").value = datos.iva21 || 0;
 document.getElementById("iva105").value = datos.iva105 || 0;
+document.getElementById("iva27").value = datos.iva27 || 0;
+document.getElementById("percepcionIva").value = datos.percepcionIva || 0;
+document.getElementById("percepcionIibbBsAs").value = datos.percepcionIibbBsAs || 0;
+document.getElementById("percepcionIibbCaba").value = datos.percepcionIibbCaba || 0;
 document.getElementById("internos").value = datos.impuestosInternos || 0;
-document.getElementById("iibb").value = datos.iibb || 0;
 document.getElementById("total").value = datos.total || 0;
 
     console.log("Respuesta Gemini:", texto);
@@ -701,9 +729,12 @@ document.getElementById("total").value = datos.total || 0;
 
   iva105:numero("iva105"),
 
-  internos:numero("internos"),
+  iva27:numero("iva27"),
+percepcionIva:numero("percepcionIva"),
+percepcionIibbBsAs:numero("percepcionIibbBsAs"),
+percepcionIibbCaba:numero("percepcionIibbCaba"),
 
-  iibb:numero("iibb"),
+  internos:numero("internos"),
 
   total:numero("total"),
 
@@ -735,8 +766,11 @@ const sumaCalculada =
    compra.neto +
    compra.iva21 +
    compra.iva105 +
-   compra.internos +
-   compra.iibb;
+   compra.iva27 +
+   compra.percepcionIva +
+   compra.percepcionIibbBsAs +
+   compra.percepcionIibbCaba +
+   compra.internos;
 
  const diferencia = Math.abs(sumaCalculada - compra.total);
 
@@ -826,8 +860,11 @@ window.firestoreUpdateDoc(
     neto: compra.neto,
     iva21: compra.iva21,
     iva105: compra.iva105,
+   iva27: compra.iva27,
+percepcionIva: compra.percepcionIva,
+percepcionIibbBsAs: compra.percepcionIibbBsAs,
+percepcionIibbCaba: compra.percepcionIibbCaba,
     internos: compra.internos,
-    iibb: compra.iibb,
     total: compra.total,
 pago: compra.pago,
 
@@ -945,7 +982,6 @@ function editarCompra(indice){
  document.getElementById("iva21").value = c.iva21;
  document.getElementById("iva105").value = c.iva105;
  document.getElementById("internos").value = c.internos;
- document.getElementById("iibb").value = c.iibb || 0;
  document.getElementById("total").value = c.total;
  document.getElementById("pago").value = c.pago;
 
@@ -1029,8 +1065,11 @@ function limpiar(){
  "neto",
  "iva21",
  "iva105",
+  "iva27",
+"percepcionIva",
+"percepcionIibbBsAs",
+"percepcionIibbCaba",
  "internos",
-  "iibb",
  "total"
  ]
  .forEach(id=>{
@@ -1103,6 +1142,14 @@ function actualizar(){
    <td>${dinero(c.iva21)}</td>
 
    <td>${dinero(c.iva105)}</td>
+   
+   <td>${dinero(c.iva27 || 0)}</td>
+   
+<td>${dinero(c.percepcionIva || 0)}</td>
+
+<td>${dinero(c.percepcionIibbBsAs || 0)}</td>
+
+<td>${dinero(c.percepcionIibbCaba || 0)}</td>
 
    <td>${dinero(c.internos)}</td>
 

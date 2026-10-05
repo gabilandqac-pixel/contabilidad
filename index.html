@@ -561,7 +561,19 @@ function mostrarDatosChequeCompra(){
 
   }
 
-}function guardarCompra(){
+
+  
+ }
+ async function procesarFactura(archivo){
+
+  if(!archivo){
+    return;
+  }
+
+  alert("Factura seleccionada correctamente.");
+
+}
+ function guardarCompra(){
 
  const compra = {
 

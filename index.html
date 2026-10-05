@@ -153,6 +153,7 @@ th{background:#eef4f9}
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";  // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
+  import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -167,8 +168,11 @@ th{background:#eef4f9}
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const ai = getAI(app, { backend: new GoogleAIBackend() });
+const model = getGenerativeModel(ai, { model: "gemini-3.8-flash" });
 window.db = db;
 window.firestoreCollection = collection;
+window.geminiModel = model;  
 window.firestoreAddDoc = addDoc;
 window.firestoreGetDocs = getDocs;
 window.firestoreUpdateDoc = updateDoc;

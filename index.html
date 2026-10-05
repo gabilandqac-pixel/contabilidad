@@ -635,6 +635,21 @@ Si algún dato no aparece, usá una cadena vacía o 0.
 
     const texto = resultado.response.text();
 
+   const datos = JSON.parse(
+  texto.replace(/```json|```/g, "").trim()
+);
+
+document.getElementById("fecha").value = datos.fecha || "";
+document.getElementById("razon").value = datos.razonSocial || "";
+document.getElementById("cuit").value = datos.cuit || "";
+document.getElementById("tipo").value = datos.tipoFactura || "A";
+document.getElementById("numero").value = datos.numeroFactura || "";
+document.getElementById("neto").value = datos.neto || 0;
+document.getElementById("iva21").value = datos.iva21 || 0;
+document.getElementById("iva105").value = datos.iva105 || 0;
+document.getElementById("internos").value = datos.impuestosInternos || 0;
+document.getElementById("total").value = datos.total || 0;
+
     console.log("Respuesta Gemini:", texto);
 
     alert("Gemini leyó la factura correctamente.");

@@ -1009,7 +1009,41 @@ function editarCompra(indice){
    behavior:"smooth"
  });
 }
+async function pagarCompra(indice){
 
+ const c = compras[indice];
+
+ const medio = prompt(
+   "Ingresá el medio de pago:\n\n" +
+   "Efectivo caja chica\n" +
+   "Efectivo caja grande\n" +
+   "Transferencia Banco Provincia\n" +
+   "Transferencia Comafi\n" +
+   "Cheque Banco Provincia\n" +
+   "Cheque Comafi\n" +
+   "Pago Gabi\n" +
+   "Pago Fede"
+ );
+
+ if(!medio) return;
+
+ c.pago = medio;
+
+ await window.firestoreUpdateDoc(
+   window.firestoreDoc(
+     window.db,
+     "compras",
+     c.idFirebase
+   ),
+   {
+     pago: medio
+   }
+ );
+
+ actualizar();
+
+ alert("Pago registrado correctamente.");
+}
 async function eliminarCompra(indice){
 
  const c = compras[indice];
@@ -1163,7 +1197,13 @@ function actualizar(){
    <td>${c.pago}</td>
 
    <td>
-
+  ${c.pago === "Pendiente de pago" ? `
+<button
+class="editar"
+onclick="pagarCompra(${indice})">
+💵 Pagar
+</button>
+` : ""}
    <button
    class="editar"
    onclick="editarCompra(${indice})">
@@ -1175,6 +1215,7 @@ function actualizar(){
    onclick="eliminarCompra(${indice})">
    🗑️ Eliminar
    </button>
+   
 
    </td>
 

@@ -156,9 +156,11 @@ th{background:#eef4f9}
  <script type="module">
   // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";  // TODO: Add SDKs for Firebase products that you want to use
-  // https://firebase.google.com/docs/web/setup#available-libraries
-  import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+import { getAI, getGenerativeModel, GoogleAIBackend } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-ai.js";
 
   // Your web app's Firebase configuration
   const firebaseConfig = {
@@ -173,9 +175,49 @@ th{background:#eef4f9}
   // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
+  const auth = getAuth(app);
   const ai = getAI(app, { backend: new GoogleAIBackend() });
 const model = getGenerativeModel(ai, { model: "gemini-3.8-flash" });
 window.db = db;
+  window.auth = auth;
+  window.cerrarSesion = async function(){
+  await signOut(auth);
+};
+  window.iniciarSesion = async function(){
+
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value;
+  const error = document.getElementById("loginError");
+
+  error.textContent = "";
+
+  if(!email || !password){
+    error.textContent = "Ingresá email y contraseña.";
+    return;
+  }
+
+  try{
+    await signInWithEmailAndPassword(auth, email, password);
+  }catch(e){
+    console.error(e);
+    error.textContent = "Email o contraseña incorrectos.";
+  }
+};
+
+onAuthStateChanged(auth, (user) => {
+
+  const login = document.getElementById("loginPantalla");
+  const app = document.getElementById("appContabilidad");
+
+  if(user){
+    login.style.display = "none";
+    app.style.display = "block";
+  }else{
+    login.style.display = "flex";
+    app.style.display = "none";
+  }
+
+});
 window.firestoreCollection = collection;
 window.geminiModel = model;  
 window.firestoreAddDoc = addDoc;
@@ -187,7 +229,55 @@ window.firestoreDoc = doc;
 </head>
 
 <body>
+<div id="loginPantalla" style="
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#f3f4f6;
+">
+  <div style="
+    background:white;
+    padding:35px;
+    border-radius:14px;
+    width:90%;
+    max-width:400px;
+    box-shadow:0 5px 20px rgba(0,0,0,.15);
+  ">
+    <h2 style="text-align:center;">🔐 Contabilidad</h2>
+    <p style="text-align:center;">Ingresá con tu usuario</p>
 
+    <label>Email</label>
+    <input
+      type="email"
+      id="loginEmail"
+      placeholder="tu@email.com"
+      style="width:100%;margin-bottom:15px;"
+    >
+
+    <label>Contraseña</label>
+    <input
+      type="password"
+      id="loginPassword"
+      placeholder="Contraseña"
+      style="width:100%;margin-bottom:20px;"
+    >
+
+    <button
+      type="button"
+      onclick="iniciarSesion()"
+      style="width:100%;"
+    >
+      Ingresar
+    </button>
+
+    <p id="loginError"
+       style="color:#b91c1c;text-align:center;margin-top:15px;">
+    </p>
+  </div>
+</div>
+
+ <div id="appContabilidad" style="display:none;">
 <header>
 <h1>📄 Contabilidad - Compras</h1>
 <p>Control de facturas, impuestos, pagos y cheques</p>
@@ -1143,6 +1233,8 @@ function exportarCSV(){
 window.addEventListener("load", cargarComprasDesdeFirebase);
 
 </script>
+
+  </div>
 
 </body>
 </html>

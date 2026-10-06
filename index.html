@@ -138,6 +138,11 @@ th{background:#eef4f9}
 }
 
 .oculto{display:none}
+.tarjeta{background:#fff;border:1px solid #e1e8ef;border-radius:10px;padding:15px;margin:10px 0}
+.filtros{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:15px 0}
+.resumen-cheques{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:15px 0}
+.estado-pendiente{font-weight:bold;color:#b26a00}.estado-pagado{font-weight:bold;color:#198754}
+@media(max-width:800px){.filtros,.resumen-cheques{grid-template-columns:1fr}}
 
 @media(max-width:800px){
  .resumen,.menu,.formulario{
@@ -232,7 +237,7 @@ window.firestoreDoc = doc;
 💰 Cheques
 </button>
 <button class="boton violeta"
-onclick="alert('Después agregaremos la exportación a Excel por fechas.')">
+onclick="exportarCSV()">
 📊 Exportar a Excel
 </button>
 
@@ -391,7 +396,12 @@ Cancelar
 <section id="listado" class="seccion oculto">
 
 <h2>Compras cargadas</h2>
-
+<div class="filtros">
+  <div class="campo"><label>Buscar</label><input id="filtroTexto" placeholder="Proveedor, CUIT o factura" oninput="actualizar()"></div>
+  <div class="campo"><label>Desde</label><input id="filtroDesde" type="date" onchange="actualizar()"></div>
+  <div class="campo"><label>Hasta</label><input id="filtroHasta" type="date" onchange="actualizar()"></div>
+  <div class="campo"><label>Estado de pago</label><select id="filtroPago" onchange="actualizar()"><option value="">Todos</option><option value="Pendiente de pago">Pendientes</option><option value="pagadas">Pagadas</option></select></div>
+</div>
 <div class="tabla">
 
 <table>
@@ -431,6 +441,10 @@ Cancelar
   <h2>💰 Cheques</h2>
 
   <p>Control de cheques emitidos y fechas de pago.</p>
+<div class="resumen-cheques">
+ <div class="card"><h3>Cheques pendientes</h3><strong id="rChequesPendientes">$ 0</strong></div>
+ <div class="card"><h3>Cheques pagados</h3><strong id="rChequesPagados">$ 0</strong></div>
+</div>
 
   <div class="campo">
   <label>Banco</label>
@@ -709,197 +723,47 @@ document.getElementById("total").value = datos.total || 0;
   }
 
 }
- function guardarCompra(){
-
- const compra = {
-
-  fecha:
-  document.getElementById("fecha").value,
-
-  razon:
-  document.getElementById("razon").value.trim(),
-
-  cuit:
-  document.getElementById("cuit").value.trim(),
-
-  tipo:
-  document.getElementById("tipo").value,
-
-  numero:
-  document.getElementById("numero").value.trim(),
-
-  neto:numero("neto"),
-
-  iva21:numero("iva21"),
-
-  iva105:numero("iva105"),
-
-  iva27:numero("iva27"),
-percepcionIva:numero("percepcionIva"),
-percepcionIibbBsAs:numero("percepcionIibbBsAs"),
-percepcionIibbCaba:numero("percepcionIibbCaba"),
-
-  internos:numero("internos"),
-
-  total:numero("total"),
-
- pago:
-document.getElementById("pago").value,
-
-chequeBanco:
-document.getElementById("chequeBanco")?.value || "",
-
-chequeNumero:
-document.getElementById("chequeNumero")?.value.trim() || "",
-
-chequeImporte:
-numero("chequeImporte"),
-
-chequeEmision:
-document.getElementById("chequeFechaEmision")?.value || "",
-
-chequePago:
-document.getElementById("chequeFechaPago")?.value || "",
-
-chequeDestinatario:
-document.getElementById("chequeDestinatario")?.value.trim() || "",
-
-chequeTipo:
-document.getElementById("chequeTipo")?.value || ""
-};
-const sumaCalculada =
-   compra.neto +
-   compra.iva21 +
-   compra.iva105 +
-   compra.iva27 +
-   compra.percepcionIva +
-   compra.percepcionIibbBsAs +
-   compra.percepcionIibbCaba +
-   compra.internos;
-
- const diferencia = Math.abs(sumaCalculada - compra.total);
-
- if(diferencia > 1){
-   alert(
-     "⚠️ Atención: los importes no coinciden.\n\n" +
-     "Neto + IVA + Impuestos internos = " +
-     dinero(sumaCalculada) +
-     "\n\nTotal de la factura = " +
-     dinero(compra.total) +
-     "\n\nRevisá los importes antes de guardar."
-   );
-   return;
- }
- if(
-   !compra.fecha ||
-   !compra.razon ||
-   !compra.numero
- ){
-   alert(
-   "Completá fecha, razón social y número de factura."
-   );
-   return;
- }
-
-     window.firestoreAddDoc(
-     window.firestoreCollection(window.db, "compras"),
-     compra
-   ).catch(error => {
-     console.error("Error al guardar en Firebase:", error);
-   });
-
-if(indiceEdicion === null){
-
-  const numeros = document.querySelectorAll(".compraChequeNumero");
-  const destinatarios = document.querySelectorAll(".compraChequeDestinatario");
-  const importes = document.querySelectorAll(".compraChequeImporte");
-  const emisiones = document.querySelectorAll(".compraChequeFechaEmision");
-  const pagos = document.querySelectorAll(".compraChequeFechaPago");
-  const tipos = document.querySelectorAll(".compraChequeTipo");
-
-  numeros.forEach((campo, i) => {
-
-    const numeroCheque = campo.value.trim();
-
-    if(numeroCheque === "") return;
-
-    const cheque = {
-      banco: compra.pago === "Cheque Banco Provincia"
-        ? "Banco Provincia"
-        : "Banco Comafi",
-
-      numero: numeroCheque,
-      destinatario: destinatarios[i]?.value.trim() || "",
-      importe: Number(importes[i]?.value) || 0,
-      fechaEmision: emisiones[i]?.value || "",
-      fechaPago: pagos[i]?.value || "",
-      tipo: tipos[i]?.value || "",
-      razonSocial: compra.razon,
-      numeroFactura: compra.numero
-    };
-
-    window.firestoreAddDoc(
-      window.firestoreCollection(window.db, "cheques"),
-      cheque
-    ).catch(error => {
-      console.error("Error al guardar cheque:", error);
-    });
-
-  });
-
-   compras.push(compra);
-
-   alert("Compra guardada correctamente.");
-
- }else{
-compra.idFirebase = compras[indiceEdicion].idFirebase;
-
-window.firestoreUpdateDoc(
-  window.firestoreDoc(window.db, "compras", compra.idFirebase),
-  {
-    fecha: compra.fecha,
-    razon: compra.razon,
-    cuit: compra.cuit,
-    tipo: compra.tipo,
-    numero: compra.numero,
-    neto: compra.neto,
-    iva21: compra.iva21,
-    iva105: compra.iva105,
-   iva27: compra.iva27,
-percepcionIva: compra.percepcionIva,
-percepcionIibbBsAs: compra.percepcionIibbBsAs,
-percepcionIibbCaba: compra.percepcionIibbCaba,
-    internos: compra.internos,
-    total: compra.total,
-pago: compra.pago,
-
-chequeBanco: compra.chequeBanco,
-chequeNumero: compra.chequeNumero,
-chequeImporte: compra.chequeImporte,
-chequeEmision: compra.chequeEmision,
-chequePago: compra.chequePago,
-chequeDestinatario: compra.chequeDestinatario
-  }
-).catch(error => {
-  console.error("Error al actualizar en Firebase:", error);
-});  
-   compras[indiceEdicion] = compra;
-
-   alert("Compra actualizada correctamente.");
-
- }
-
- localStorage.setItem(
-   "compras",
-   JSON.stringify(compras)
- );
-
- limpiar();
-
- actualizar();
-
- mostrar("listado");
+ async function guardarCompra(){
+  const compra = {
+    fecha: document.getElementById("fecha").value,
+    razon: document.getElementById("razon").value.trim(),
+    cuit: document.getElementById("cuit").value.trim(),
+    tipo: document.getElementById("tipo").value,
+    numero: document.getElementById("numero").value.trim(),
+    neto: numero("neto"), iva21: numero("iva21"), iva105: numero("iva105"), iva27: numero("iva27"),
+    percepcionIva: numero("percepcionIva"), percepcionIibbBsAs: numero("percepcionIibbBsAs"), percepcionIibbCaba: numero("percepcionIibbCaba"),
+    internos: numero("internos"), total: numero("total"), pago: document.getElementById("pago").value
+  };
+  const sumaCalculada = compra.neto+compra.iva21+compra.iva105+compra.iva27+compra.percepcionIva+compra.percepcionIibbBsAs+compra.percepcionIibbCaba+compra.internos;
+  if(Math.abs(sumaCalculada-compra.total)>1){ alert("⚠️ Atención: los importes no coinciden.\n\nSuma calculada = "+dinero(sumaCalculada)+"\nTotal = "+dinero(compra.total)+"\n\nRevisá los importes antes de guardar."); return; }
+  if(!compra.fecha || !compra.razon || !compra.numero){ alert("Completá fecha, razón social y número de factura."); return; }
+  try{
+    if(indiceEdicion === null){
+      const ref = await window.firestoreAddDoc(window.firestoreCollection(window.db,"compras"), compra);
+      compra.idFirebase = ref.id;
+      if(compra.pago.startsWith("Cheque ")) await guardarChequesDelFormulario(compra);
+      compras.push(compra);
+      alert("Compra guardada correctamente.");
+    } else {
+      compra.idFirebase = compras[indiceEdicion].idFirebase;
+      await window.firestoreUpdateDoc(window.firestoreDoc(window.db,"compras",compra.idFirebase), compra);
+      compras[indiceEdicion] = compra;
+      alert("Compra actualizada correctamente.");
+    }
+    limpiar(); actualizar(); mostrar("listado");
+  }catch(error){ console.error(error); alert("No se pudo guardar la compra."); }
 }
+
+async function guardarChequesDelFormulario(compra){
+  const numeros=document.querySelectorAll(".compraChequeNumero"), destinatarios=document.querySelectorAll(".compraChequeDestinatario"), importes=document.querySelectorAll(".compraChequeImporte"), emisiones=document.querySelectorAll(".compraChequeFechaEmision"), pagos=document.querySelectorAll(".compraChequeFechaPago"), tipos=document.querySelectorAll(".compraChequeTipo");
+  for(let i=0;i<numeros.length;i++){
+    const n=numeros[i].value.trim(); if(!n) continue;
+    await window.firestoreAddDoc(window.firestoreCollection(window.db,"cheques"),{
+      banco: compra.pago === "Cheque Banco Provincia" ? "Banco Provincia" : "Banco Comafi", numero:n, destinatario:destinatarios[i]?.value.trim()||"", importe:Number(importes[i]?.value)||0, fechaEmision:emisiones[i]?.value||"", fechaPago:pagos[i]?.value||"", tipo:tipos[i]?.value||"", estado:"Pendiente", razonSocial:compra.razon, numeroFactura:compra.numero
+    });
+  }
+}
+
 function guardarCheque(){
 
   const cheque = {
@@ -926,63 +790,22 @@ estado: "Pendiente"
 
 } 
 async function cargarCheques(){
-
-  const lista = document.getElementById("listaCheques");
-
-  lista.innerHTML = "<p>Cargando cheques...</p>";
-
-  try {
-
-    const consulta = await window.firestoreGetDocs(
-      window.firestoreCollection(window.db, "cheques")
-    );
-
-    let html = "";
-
-    consulta.forEach((doc) => {
-
-      const cheque = doc.data();
-
-      html += `
-        <div class="tarjeta">
-          <strong>${cheque.banco || "Sin banco"}</strong><br>
-          Número: ${cheque.numero || "-"}<br>
-          Destinatario: ${cheque.destinatario || "-"}<br>
-          Importe: ${dinero(cheque.importe || 0)}<br>
-          Emisión: ${cheque.fechaEmision || "-"}<br>
-          Pago: ${cheque.fechaPago || "-"}<br>
-         Tipo: ${cheque.tipo || "-"}<br>
-Estado: ${cheque.estado || "Pendiente"}<br>
-
-${(cheque.estado || "Pendiente") === "Pendiente" ? `
-<button
-class="editar"
-onclick="marcarChequePagado('${doc.id}')">
-✅ Marcar como pagado
-</button>
-` : ""}
-        </div>
-      `;
-
+  const lista=document.getElementById("listaCheques"); lista.innerHTML="<p>Cargando cheques...</p>";
+  try{
+    const consulta=await window.firestoreGetDocs(window.firestoreCollection(window.db,"cheques"));
+    let html="", pendientes=0, pagados=0;
+    consulta.forEach((doc)=>{
+      const cheque=doc.data(), estado=cheque.estado||"Pendiente", importe=Number(cheque.importe)||0;
+      if(estado==="Pagado") pagados+=importe; else pendientes+=importe;
+      html += `<div class="tarjeta"><strong>${cheque.banco||"Sin banco"}</strong><br>Número: ${cheque.numero||"-"}<br>Destinatario: ${cheque.destinatario||"-"}<br>Proveedor: ${cheque.razonSocial||"-"}<br>Factura: ${cheque.numeroFactura||"-"}<br>Importe: ${dinero(importe)}<br>Emisión: ${cheque.fechaEmision||"-"}<br>Pago: ${cheque.fechaPago||"-"}<br>Tipo: ${cheque.tipo||"-"}<br>Estado: <span class="${estado==="Pagado"?"estado-pagado":"estado-pendiente"}">${estado}</span><br>${estado!=="Pagado"?`<button class="editar" onclick="marcarChequePagado('${doc.id}')">✅ Marcar como pagado</button>`:""}</div>`;
     });
+    lista.innerHTML=html||"<p>No hay cheques cargados.</p>";
+    document.getElementById("rChequesPendientes").textContent=dinero(pendientes);
+    document.getElementById("rChequesPagados").textContent=dinero(pagados);
+  }catch(error){ console.error(error); lista.innerHTML="<p>No se pudieron cargar los cheques.</p>"; }
+}
 
-    if(html === ""){
-      html = "<p>No hay cheques cargados.</p>";
-    }
-
-    lista.innerHTML = html;
-
-  } catch(error){
-
-    console.error("Error al cargar cheques:", error);
-
-    lista.innerHTML =
-      "<p>No se pudieron cargar los cheques.</p>";
-
-  }
-
-} 
- async function marcarChequePagado(id){
+async function marcarChequePagado(id){
 
   const confirmar = confirm(
     "¿Querés marcar este cheque como pagado?"
@@ -1032,6 +855,10 @@ function editarCompra(indice){
  document.getElementById("neto").value = c.neto;
  document.getElementById("iva21").value = c.iva21;
  document.getElementById("iva105").value = c.iva105;
+ document.getElementById("iva27").value = c.iva27 || 0;
+ document.getElementById("percepcionIva").value = c.percepcionIva || 0;
+ document.getElementById("percepcionIibbBsAs").value = c.percepcionIibbBsAs || 0;
+ document.getElementById("percepcionIibbCaba").value = c.percepcionIibbCaba || 0;
  document.getElementById("internos").value = c.internos;
  document.getElementById("total").value = c.total;
  document.getElementById("pago").value = c.pago;
@@ -1279,120 +1106,38 @@ function mostrar(id){
  ).classList.remove("oculto");
 }
 
-function actualizar(){
-
- const tabla =
- document.getElementById("tablaCompras");
-
- tabla.innerHTML="";
-
- compras.forEach((c,indice)=>{
-
-   tabla.innerHTML += `
-
-   <tr>
-
-   <td>${c.fecha}</td>
-
-   <td>${c.razon}</td>
-
-   <td>${c.cuit}</td>
-
-   <td>${c.tipo}</td>
-
-   <td>${c.numero}</td>
-
-   <td>${dinero(c.neto)}</td>
-
-   <td>${dinero(c.iva21)}</td>
-
-   <td>${dinero(c.iva105)}</td>
-   
-   <td>${dinero(c.iva27 || 0)}</td>
-   
-<td>${dinero(c.percepcionIva || 0)}</td>
-
-<td>${dinero(c.percepcionIibbBsAs || 0)}</td>
-
-<td>${dinero(c.percepcionIibbCaba || 0)}</td>
-
-   <td>${dinero(c.internos)}</td>
-
-   <td>${dinero(c.total)}</td>
-
-   <td>${c.pago}</td>
-
-   <td>
-  ${c.pago === "Pendiente de pago" ? `
-<button
-class="editar"
-onclick="pagarCompra(${indice})">
-💵 Pagar
-</button>
-` : ""}
-   <button
-   class="editar"
-   onclick="editarCompra(${indice})">
-   ✏️ Editar
-   </button>
-
-   <button
-   class="eliminar"
-   onclick="eliminarCompra(${indice})">
-   🗑️ Eliminar
-   </button>
-   
-
-   </td>
-
-   </tr>
-
-   `;
+function comprasFiltradas(){
+ const texto=(document.getElementById("filtroTexto")?.value||"").toLowerCase().trim(), desde=document.getElementById("filtroDesde")?.value||"", hasta=document.getElementById("filtroHasta")?.value||"", estado=document.getElementById("filtroPago")?.value||"";
+ return compras.filter(c=>{
+   const coincideTexto=!texto || `${c.razon||""} ${c.cuit||""} ${c.numero||""}`.toLowerCase().includes(texto);
+   const coincideDesde=!desde || c.fecha>=desde, coincideHasta=!hasta || c.fecha<=hasta;
+   const coincideEstado=!estado || (estado==="Pendiente de pago" ? c.pago==="Pendiente de pago" : c.pago!=="Pendiente de pago");
+   return coincideTexto&&coincideDesde&&coincideHasta&&coincideEstado;
  });
+}
 
- document.getElementById(
-   "rTotal"
- ).textContent =
- dinero(
-   compras.reduce(
-     (s,c)=>s+c.total,0
-   )
- );
+function actualizar(){
+ const tabla=document.getElementById("tablaCompras"); tabla.innerHTML="";
+ comprasFiltradas().forEach(c=>{
+   const indice=compras.indexOf(c);
+   tabla.innerHTML += `<tr><td>${c.fecha||""}</td><td>${c.razon||""}</td><td>${c.cuit||""}</td><td>${c.tipo||""}</td><td>${c.numero||""}</td><td>${dinero(c.neto||0)}</td><td>${dinero(c.iva21||0)}</td><td>${dinero(c.iva105||0)}</td><td>${dinero(c.iva27||0)}</td><td>${dinero(c.percepcionIva||0)}</td><td>${dinero(c.percepcionIibbBsAs||0)}</td><td>${dinero(c.percepcionIibbCaba||0)}</td><td>${dinero(c.internos||0)}</td><td>${dinero(c.total||0)}</td><td>${c.pago||""}</td><td>${c.pago==="Pendiente de pago"?`<button class="editar" onclick="pagarCompra(${indice})">💵 Pagar</button>`:""}<button class="editar" onclick="editarCompra(${indice})">✏️ Editar</button><button class="eliminar" onclick="eliminarCompra(${indice})">🗑️ Eliminar</button></td></tr>`;
+ });
+ const suma=campo=>compras.reduce((s,c)=>s+(Number(c[campo])||0),0);
+ document.getElementById("rTotal").textContent=dinero(suma("total"));
+ document.getElementById("rIva21").textContent=dinero(suma("iva21"));
+ document.getElementById("rIva105").textContent=dinero(suma("iva105"));
+ document.getElementById("rInternos").textContent=dinero(suma("internos"));
+ document.getElementById("rPendiente").textContent=dinero(compras.filter(c=>c.pago==="Pendiente de pago").reduce((s,c)=>s+(Number(c.total)||0),0));
+}
 
- document.getElementById(
-   "rIva21"
- ).textContent =
- dinero(
-   compras.reduce(
-     (s,c)=>s+c.iva21,0
-   )
- );
-
- document.getElementById(
-   "rIva105"
- ).textContent =
- dinero(
-   compras.reduce(
-     (s,c)=>s+c.iva105,0
-   )
- );
-
- document.getElementById(
-   "rInternos"
- ).textContent =
- dinero(
-   compras.reduce(
-     (s,c)=>s+c.internos,0
-   )
- );
- document.getElementById(
-  "rPendiente"
-).textContent =
-dinero(
-  compras
-    .filter(c => c.pago === "Pendiente de pago")
-    .reduce((s,c) => s + c.total, 0)
-);
+function exportarCSV(){
+ const datos=comprasFiltradas(); if(!datos.length){alert("No hay compras para exportar.");return;}
+ const encabezados=["Fecha","Razón social","CUIT","Tipo","Número","Neto","IVA 21%","IVA 10,5%","IVA 27%","Percepción IVA","Percepción IIBB Bs. As.","Percepción IIBB CABA","Impuestos internos","Total","Forma de pago"];
+ const filas=datos.map(c=>[c.fecha,c.razon,c.cuit,c.tipo,c.numero,c.neto,c.iva21,c.iva105,c.iva27||0,c.percepcionIva||0,c.percepcionIibbBsAs||0,c.percepcionIibbCaba||0,c.internos,c.total,c.pago]);
+ const esc=v=>'"'+String(v??"").replaceAll('"','""')+'"';
+ const csv='\ufeff'+[encabezados,...filas].map(f=>f.map(esc).join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}), url=URL.createObjectURL(blob), a=document.createElement('a');
+ a.href=url; a.download=`compras_${new Date().toISOString().slice(0,10)}.csv`; a.click(); URL.revokeObjectURL(url);
 }
 
 window.addEventListener("load", cargarComprasDesdeFirebase);

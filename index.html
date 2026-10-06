@@ -909,7 +909,8 @@ function guardarCheque(){
    importe: Number(document.getElementById("chequeImporte").value) || 0,
     fechaEmision: document.getElementById("chequeFechaEmision").value,
     fechaPago: document.getElementById("chequeFechaPago").value,
-    tipo: document.getElementById("chequeTipo").value
+    tipo: document.getElementById("chequeTipo").value,
+estado: "Pendiente"
   };
 
   window.firestoreAddDoc(
@@ -950,7 +951,8 @@ async function cargarCheques(){
           Importe: ${dinero(cheque.importe || 0)}<br>
           Emisión: ${cheque.fechaEmision || "-"}<br>
           Pago: ${cheque.fechaPago || "-"}<br>
-          Tipo: ${cheque.tipo || "-"}
+         Tipo: ${cheque.tipo || "-"}<br>
+Estado: ${cheque.estado || "Pendiente"}
         </div>
       `;
 
@@ -1099,6 +1101,7 @@ await window.firestoreAddDoc(
     fechaEmision: fechaEmisionCheque,
     fechaPago: fechaPagoCheque,
     tipo: tipoChequeTexto,
+   estado: "Pendiente",
     razonSocial: c.razon,
     numeroFactura: c.numero
   }

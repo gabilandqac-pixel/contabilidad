@@ -952,7 +952,15 @@ async function cargarCheques(){
           Emisión: ${cheque.fechaEmision || "-"}<br>
           Pago: ${cheque.fechaPago || "-"}<br>
          Tipo: ${cheque.tipo || "-"}<br>
-Estado: ${cheque.estado || "Pendiente"}
+Estado: ${cheque.estado || "Pendiente"}<br>
+
+${(cheque.estado || "Pendiente") === "Pendiente" ? `
+<button
+class="editar"
+onclick="marcarChequePagado('${doc.id}')">
+✅ Marcar como pagado
+</button>
+` : ""}
         </div>
       `;
 
@@ -974,6 +982,42 @@ Estado: ${cheque.estado || "Pendiente"}
   }
 
 } 
+ async function marcarChequePagado(id){
+
+  const confirmar = confirm(
+    "¿Querés marcar este cheque como pagado?"
+  );
+
+  if(!confirmar) return;
+
+  try {
+
+    await window.firestoreUpdateDoc(
+      window.firestoreDoc(
+        window.db,
+        "cheques",
+        id
+      ),
+      {
+        estado: "Pagado"
+      }
+    );
+
+    await cargarCheques();
+
+    alert("Cheque marcado como pagado.");
+
+  } catch(error){
+
+    console.error(
+      "Error al actualizar el cheque:",
+      error
+    );
+
+    alert("No se pudo actualizar el cheque.");
+
+  }
+}
 function editarCompra(indice){
 
  const c = compras[indice];

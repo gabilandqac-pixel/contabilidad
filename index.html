@@ -1050,7 +1050,59 @@ const medio = opcionesPago[numeroOpcion - 1];
   medio === "Cheque Banco Provincia" ||
   medio === "Cheque Comafi"
 ){
-  alert("Ahora vamos a cargar los datos del cheque.");
+  const numeroCheque = prompt("Número de cheque:");
+
+if(!numeroCheque) return;
+  const destinatarioCheque = prompt("Destinatario / Beneficiario del cheque:");
+
+if(!destinatarioCheque) return;
+  const importeCheque = Number(
+  prompt("Importe del cheque:")
+);
+
+if(!importeCheque || importeCheque <= 0) return;
+  const fechaEmisionCheque = prompt(
+  "Fecha de emisión del cheque (AAAA-MM-DD):"
+);
+
+if(!fechaEmisionCheque) return;
+  const fechaPagoCheque = prompt(
+  "Fecha de pago del cheque (AAAA-MM-DD):"
+);
+
+if(!fechaPagoCheque) return;
+  const tipoCheque = prompt(
+  "Tipo de cheque:\n\n" +
+  "1 - Cheque físico\n" +
+  "2 - eCheq"
+);
+
+if(tipoCheque !== "1" && tipoCheque !== "2"){
+  alert("Tipo de cheque incorrecto.");
+  return;
+}
+
+const tipoChequeTexto =
+  tipoCheque === "1" ? "Cheque físico" : "eCheq";
+  const bancoCheque =
+  medio === "Cheque Banco Provincia"
+    ? "Banco Provincia"
+    : "Banco Comafi";
+
+await window.firestoreAddDoc(
+  window.firestoreCollection(window.db, "cheques"),
+  {
+    banco: bancoCheque,
+    numero: numeroCheque,
+    destinatario: destinatarioCheque,
+    importe: importeCheque,
+    fechaEmision: fechaEmisionCheque,
+    fechaPago: fechaPagoCheque,
+    tipo: tipoChequeTexto,
+    razonSocial: c.razon,
+    numeroFactura: c.numero
+  }
+);
 }
 
 

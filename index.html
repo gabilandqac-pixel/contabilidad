@@ -1013,19 +1013,39 @@ async function pagarCompra(indice){
 
  const c = compras[indice];
 
- const medio = prompt(
-   "Ingresá el medio de pago:\n\n" +
-   "Efectivo caja chica\n" +
-   "Efectivo caja grande\n" +
-   "Transferencia Banco Provincia\n" +
-   "Transferencia Comafi\n" +
-   "Cheque Banco Provincia\n" +
-   "Cheque Comafi\n" +
-   "Pago Gabi\n" +
-   "Pago Fede"
- );
+ const opcionesPago = [
+  "Efectivo caja chica",
+  "Efectivo caja grande",
+  "Transferencia Banco Provincia",
+  "Transferencia Comafi",
+  "Cheque Banco Provincia",
+  "Cheque Comafi",
+  "Pago Gabi",
+  "Pago Fede"
+];
 
- if(!medio) return;
+const eleccion = prompt(
+  "Elegí el medio de pago:\n\n" +
+  opcionesPago
+    .map((opcion, i) => `${i + 1} - ${opcion}`)
+    .join("\n")
+);
+
+if(!eleccion) return;
+
+const numeroOpcion = parseInt(eleccion);
+
+if(
+  isNaN(numeroOpcion) ||
+  numeroOpcion < 1 ||
+  numeroOpcion > opcionesPago.length
+){
+  alert("Opción de pago incorrecta.");
+  return;
+}
+
+const medio = opcionesPago[numeroOpcion - 1];
+
 
  c.pago = medio;
 

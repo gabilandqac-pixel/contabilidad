@@ -1046,6 +1046,13 @@ if(
 
 const medio = opcionesPago[numeroOpcion - 1];
 
+ if(
+  medio === "Cheque Banco Provincia" ||
+  medio === "Cheque Comafi"
+){
+  alert("Ahora vamos a cargar los datos del cheque.");
+}
+
 
  c.pago = medio;
 

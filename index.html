@@ -211,7 +211,12 @@ window.firestoreDoc = doc;
 <h3>Impuestos internos</h3>
 <strong id="rInternos">$ 0</strong>
 </div>
-
+ 
+<div class="card">
+<h3>⏳ Pendiente de pago</h3>
+<strong id="rPendiente">$ 0</strong>
+</div>
+ 
 </div>
 
 <div class="menu">
@@ -1213,6 +1218,14 @@ function actualizar(){
      (s,c)=>s+c.internos,0
    )
  );
+ document.getElementById(
+  "rPendiente"
+).textContent =
+dinero(
+  compras
+    .filter(c => c.pago === "Pendiente de pago")
+    .reduce((s,c) => s + c.total, 0)
+);
 }
 
 window.addEventListener("load", cargarComprasDesdeFirebase);

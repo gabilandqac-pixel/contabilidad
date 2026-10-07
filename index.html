@@ -769,7 +769,10 @@ const cod = totalTexto.match(
   /COD\.?\s*:?\s*(01|06|11|001|006|011)\b/
 );
 
-if(tipoLinea){
+ const tipoPegado = totalTexto.match(/\bFACTURA\s*([ABC])(?=\s|NRO|N°|Nº|\.|$)/i);
+ if(tipoPegado){
+  datos.tipoFactura = tipoPegado[1].toUpperCase();
+}else if(tipoLinea){
   datos.tipoFactura = tipoLinea.trim().toUpperCase();
 }else if(cod){
   const mapaTipo = {

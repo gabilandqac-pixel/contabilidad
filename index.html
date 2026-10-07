@@ -747,7 +747,7 @@ function cargarOCR(){
   });return cargandoTesseract;
 }
 async function cargarPDF(){
-  if(!cargandoPDF)cargandoPDF=import('https://cdn.jsdelivr.net/npm/pdfjs-dist@5.6.205/build/pdf.min.mjs').then(pdf=>{pdf.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';return pdf;}).catch(e=>{cargandoPDF=null;throw new Error('No se pudo descargar el lector PDF. Revisá la conexión y actualizá el navegador.');});
+  if(!cargandoPDF)cargandoPDF=import('https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.min.mjs').then(pdf=>{pdf.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/build/pdf.worker.min.mjs';return pdf;}).catch(e=>{cargandoPDF=null;throw new Error('No se pudo descargar el lector PDF. Revisá la conexión y actualizá el navegador.');});
   return cargandoPDF;
 }
 function textoPDF(items){

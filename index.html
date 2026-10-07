@@ -758,7 +758,7 @@ function textoPDF(items){
 function extraerDatosFactura(texto){
   const lineas=texto.split(/\r?\n/).map(l=>l.trim()).filter(Boolean),normal=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();
   const totalTexto=normal(texto),datos={fecha:'',razonSocial:'',cuit:'',tipoFactura:'',numeroFactura:'',neto:null,iva21:null,iva105:null,iva27:null,percepcionIva:null,percepcionIibbBsAs:null,percepcionIibbCaba:null,impuestosInternos:null,total:null};
-  const fecha=totalTexto.match(/FECHA\s*(?:DE\s*)?(?:EMISION\s*)?[:.]?\s*(\d{2})[\/.-](\d{2})[\/.-](\d{4})/);
+  const fecha=totalTexto.match(/(?:FECHA\s*(?:DE\s*)?(?:EMISION\s*)?[:.]?\s*)?(\d{2})[\/.-](\d{2})[\/.-](\d{4})/);
   if(fecha){const f=fecha[3]+'-'+fecha[2]+'-'+fecha[1];if(fechaValida(f))datos.fecha=f;}
   const numero=totalTexto.match(/(?:NRO\.?|NUMERO)\s*[:.]?\s*(\d{4,5})\s*-\s*(\d{6,8})/);
   const pv=totalTexto.match(/PUNTO\s*DE\s*VENTA\s*:\s*(\d{1,5})/),comp=totalTexto.match(/COMP\.?\s*NRO\.?\s*:\s*(\d{1,8})/);

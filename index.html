@@ -883,7 +883,25 @@ async function procesarFactura(archivo){
   const sumaCalculada = compra.neto+compra.iva21+compra.iva105+compra.iva27+compra.percepcionIva+compra.percepcionIibbBsAs+compra.percepcionIibbCaba+compra.internos;
   if(Math.abs(sumaCalculada-compra.total)>1){ alert("⚠️ Atención: los importes no coinciden.\n\nSuma calculada = "+dinero(sumaCalculada)+"\nTotal = "+dinero(compra.total)+"\n\nRevisá los importes antes de guardar."); return; }
   if(!compra.fecha || !compra.razon || !compra.numero){ alert("Completá fecha, razón social y número de factura."); return; }
-  if(guardandoCompra)return;
+  const normalizarCUIT = v => String(v || '').replace(/\D/g, '');
+const normalizarNumero = v => String(v || '').replace(/\D/g, '');
+
+const duplicada = compras.find((c, i) =>
+  i !== indiceEdicion &&
+  normalizarCUIT(c.cuit) === normalizarCUIT(compra.cuit) &&
+  String(c.tipo || '').toUpperCase() === String(compra.tipo || '').toUpperCase() &&
+  normalizarNumero(c.numero) === normalizarNumero(compra.numero)
+);
+
+if(duplicada){
+  alert(
+    "⚠️ FACTURA DUPLICADA\n\n" +
+    "Esta factura ya está cargada.\n\n" +
+    (duplicada.razon || compra.razon) + "\n" +
+    "Factura " + compra.tipo + " " + compra.numero
+  );
+  return;
+}  if(guardandoCompra)return;
   const version=window.sesionVersion;
   try{
     uid();guardandoCompra=true;document.getElementById('botonGuardar').disabled=true;

@@ -763,8 +763,18 @@ function extraerDatosFactura(texto){
   const numero=totalTexto.match(/(?:NRO\.?|NUMERO)\s*[:.]?\s*(\d{4,5})\s*-\s*(\d{6,8})/);
   const pv=totalTexto.match(/PUNTO\s*DE\s*VENTA\s*:\s*(\d{1,5})/),comp=totalTexto.match(/COMP\.?\s*NRO\.?\s*:\s*(\d{1,8})/);
   if(numero)datos.numeroFactura=numero[1]+'-'+numero[2];else if(pv&&comp)datos.numeroFactura=pv[1].padStart(5,'0')+'-'+comp[1].padStart(8,'0');
-  const tipo=totalTexto.match(/FACTURA\s*([ABC])\b/),cod=totalTexto.match(/COD\.?\s*:?\s*(001|006|011)\b/);
-  if(tipo)datos.tipoFactura=tipo[1];else if(cod)datos.tipoFactura={'001':'A','006':'B','011':'C'}[cod[1]];
+  const tipo =
+  totalTexto.match(/FACTURA\s*(?:N[°º]?\s*)?([ABC])\b/) ||
+  totalTexto.match(/\b([ABC])\s+COD\.?\s*(?:N[°º]?)?\s*:?\s*(001|006|011)\b/) ||
+  totalTexto.match(/\b([ABC])\b(?=\s*(?:FACTURA|ORIGINAL|DUPLICADO|TRIPLICADO))/);
+
+const cod = totalTexto.match(/COD\.?\s*(?:N[°º]?)?\s*:?\s*(001|006|011)\b/);
+
+if(tipo){
+  datos.tipoFactura=tipo[1];
+}else if(cod){
+  datos.tipoFactura={'001':'A','006':'B','011':'C'}[cod[1]];
+}
   // Take only the issuer header, before the buyer's identification.
   const cuit=totalTexto.match(/C\.?U\.?I\.?T\.?\s*(?:NRO\.?)?\s*[:.]?\s*(\d{2}[- ]?\d{8}[- ]?\d)/);
   if(cuit)datos.cuit=cuit[1].replace(/\D/g,'');
